@@ -1,0 +1,24 @@
+{
+  "id": "picode-mail-google",
+  "name": "Google Mail",
+  "version": "0.2.0",
+  "apiVersion": 5,
+  "publisher": "COGNIX[WS]",
+  "description": "Connect and synchronize your Google Mail accounts with the core Inbox.",
+  "activation": {
+    "instance": true
+  },
+  "process": {
+    "command": "node",
+    "args": [
+      "${extensionDir}/src/main.mjs"
+    ]
+  },
+  "mail": {
+    "provider": "google"
+  },
+  "permissions": [
+    "mail:sync",
+    "mail:execute"
+  ]
+}

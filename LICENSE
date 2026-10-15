@@ -1,0 +1,21 @@
+PiCode — proprietary software
+
+Copyright (c) 2026 COGNIXSE TECNOLOGIA LTDA. All rights reserved.
+
+This software, including its source code, is proprietary and confidential.
+No right to use, copy, modify, merge, publish, distribute, sublicense or sell
+it is granted, except through a license purchased from COGNIXSE TECNOLOGIA
+LTDA (COGNIX[WS], https://cognix.ws) or another written agreement with it,
+and only within the terms of that license.
+
+Exceptions: the directories packages/*/ and internal/pitools/ carry their own
+MIT license files, which apply to those directories only.
+
+Earlier versions: copies of PiCode that were distributed under another
+license (MIT before 2026-08-25, PolyForm Noncommercial 1.0.0 until 2026-09-25,
+Apache License 2.0 from 2026-09-25 to 2026-10-02) keep that license for those
+copies. This notice applies to every version from 2026-10-02 on.
+
+Unless a purchased license says otherwise, the software is provided "as is",
+without warranty of any kind, express or implied, and the copyright holder is
+not liable for any claim, damages or other liability arising from its use.
