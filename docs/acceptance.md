@@ -14,6 +14,7 @@ from real-provider acceptance. No real email or OAuth credential is a fixture.
 | Operation ready vs uncertain | Request execution only for ready IDs | PASS: runtime.test.mjs |
 | Operation execution fails | Preserve unknown outcome; do not retry in the cycle | PASS: runtime.test.mjs |
 | Import pending vs idle / unavailable host | Wait 500 ms vs 30 seconds | PASS: runtime.test.mjs |
+| Large or JSON-escaped initial/delta bodies | Split by serialized bytes; checkpoint only after durable batches | PASS: google.test.mjs |
 | Gmail history cursor expired | Start a bounded resync using the initial-history limit | PASS: google.test.mjs |
 | Duplicate delta IDs / deleted messages | Deduplicate updates and retain deletion markers | PASS: google.test.mjs |
 | History obtained before paginated import | Retain initial cursor for subsequent changes | PASS: google.test.mjs |

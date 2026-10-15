@@ -1,3 +1,4 @@
+import { messageBatches } from './batches.mjs';
 import { clipped, text } from './text.mjs';
 const decode = value => Buffer.from(value || '', 'base64url').toString('utf8');
 function address(value) {
@@ -109,13 +110,19 @@ async function googleSync(a, c, io) {
     const result = await read(a, '/gmail/v1/users/me/messages?' + q);
     const messages = [];
     for (const m of result.messages || []) messages.push(googleMessage(await googleFull(a, m.id, read)));
-    await commit(a, result.nextPageToken ? {
+    const next = result.nextPageToken ? {
       ...c,
       page: result.nextPageToken
     } : {
       mode: 'delta',
       history: c.history
-    }, messages);
+    };
+    const batches = messageBatches(messages);
+    if (!batches.length) await commit(a, next, []);
+    for (let i = 0; i < batches.length; i++) {
+      // Advance only with the last durable batch; replay of earlier IDs is safe.
+      await commit(a, i === batches.length - 1 ? next : c, batches[i]);
+    }
     return true;
   }
   const q = new URLSearchParams({
@@ -151,7 +158,7 @@ async function googleSync(a, c, io) {
     externalId: id,
     deleted: true
   });
-  for (let i = 0; i < messages.length; i += 100) await commit(a, c, messages.slice(i, i + 100));
+  for (const batch of messageBatches(messages)) await commit(a, c, batch);
   await commit(a, result.nextPageToken ? {
     ...c,
     page: result.nextPageToken

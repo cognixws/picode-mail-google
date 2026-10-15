@@ -192,3 +192,39 @@ test('delta deduplicates changed messages and retains deletion evidence', async 
   assert.equal(commits.at(-1).cursor.history, 'after');
   assert.equal(commits.at(-1).phase, 'ready');
 });
+
+test('initial and delta batches count escaped bytes and checkpoint only after durability', async () => {
+  const data = Buffer.from('\u0001'.repeat(1_000_000)).toString('base64url');
+  const ids = Array.from({ length: 6 }, (_, i) => 'large-' + i);
+  for (const mode of ['initial', 'delta']) {
+    const cursor = { mode, history: 'before' };
+    const commits = [];
+    const read = async (_a, path) => {
+      if (path.includes('/history?')) return {
+        historyId: 'after',
+        history: [{ messagesAdded: ids.map(id => ({ message: { id } })) }]
+      };
+      if (path.includes('?maxResults')) return { messages: ids.map(id => ({ id })) };
+      return {
+        id: decodeURIComponent(path.split('/messages/')[1].split('?')[0]),
+        payload: { mimeType: 'text/plain', body: { data } }
+      };
+    };
+    await googleSync(account, cursor, { read, commit: async (a, next, messages) => {
+      assert.ok(Buffer.byteLength(JSON.stringify({ account: a.id, generation: a.generation, cursor: JSON.stringify(next), messages })) < 32 * 1024 * 1024);
+      commits.push({ cursor: next, ids: messages.map(m => m.externalId) });
+    }});
+    assert.deepEqual(commits.flatMap(c => c.ids), ids);
+    assert.ok(commits.length > 1);
+    assert.ok(commits.slice(0, -1).every(c => c.cursor === cursor));
+    assert.equal(commits.at(-1).cursor.mode, 'delta');
+    assert.equal(commits.at(-1).cursor.history, mode === 'delta' ? 'after' : 'before');
+
+    let attempts = 0;
+    await assert.rejects(googleSync(account, cursor, { read, commit: async (_a, next) => {
+      assert.equal(next, cursor);
+      if (++attempts === 2) throw new Error('fixture interruption');
+    }}), /fixture interruption/);
+    assert.equal(attempts, 2);
+  }
+});
