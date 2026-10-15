@@ -54,3 +54,8 @@ new Git-source and digest review using the same ID; the host preserves account
 data. Updates to provider mappings do not require a core release while the host
 contract remains compatible. The host remains responsible for backup/restore
 and invalidating connection authority after restore.
+
+## License
+
+The adapter software is MIT licensed. The COGNIX[WS] core has its own license.
+The Gmail name and icon belong to Google; see [asset attribution](assets/README.md).
