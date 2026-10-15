@@ -29,7 +29,10 @@ export async function syncCycle(host, sync, {
       pending = (await sync(account, savedCursor(cursor), host)) || pending;
     } catch {
       try {
-        await host.commit(account, savedCursor(cursor), [], false, 'retrying');
+        // A partial import may already have persisted a newer checkpoint.
+        const current = (await host.accounts()).find(row =>
+          row.account.id === account.id && row.account.generation === account.generation);
+        if (current) await host.commit(account, savedCursor(current.cursor), [], false, 'retrying');
       } catch {}
       log('One email account is unavailable; other accounts continue.');
     }

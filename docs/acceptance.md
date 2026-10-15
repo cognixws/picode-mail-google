@@ -10,6 +10,7 @@ from real-provider acceptance. No real email or OAuth credential is a fixture.
 | Valid local host | Send only the installation credential and scoped payload | PASS: host.test.mjs |
 | Invalid JSON / oversized response / inactive socket | Fail boundedly without transport retry or uncaught error | PASS: host.test.mjs |
 | Actual entrypoint idle, then SIGTERM | Exit cleanly | PASS: host.test.mjs |
+| Partial import fails / account generation replaced | Preserve latest durable cursor; do not write into replaced authority | PASS: runtime.test.mjs |
 | One account fails, another is healthy | Mark retrying and continue the other account | PASS: runtime.test.mjs |
 | Operation ready vs uncertain | Request execution only for ready IDs | PASS: runtime.test.mjs |
 | Operation execution fails | Preserve unknown outcome; do not retry in the cycle | PASS: runtime.test.mjs |

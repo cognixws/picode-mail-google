@@ -118,3 +118,21 @@ test('unavailable host emits bounded metadata and waits before retry', async () 
   assert.equal(logs.length, 1);
   assert.ok(!logs[0].includes('private error content'));
 });
+
+test('retry status preserves the latest durable cursor and refuses replaced generations', async () => {
+  for (const replaced of [false, true]) {
+    let reads = 0;
+    const commits = [];
+    const host = {
+      accounts: async () => [{
+        account: { id: 'one', generation: ++reads > 1 && replaced ? 'replacement' : 'original' },
+        cursor: reads > 1 ? '{"history":"durable"}' : '{}'
+      }],
+      commit: async (account, cursor, messages, reset, phase) => commits.push({ account, cursor, phase })
+    };
+    await syncCycle(host, async () => { throw new Error('partial import fixture'); }, { log: () => {} });
+    assert.equal(reads, 2);
+    assert.deepEqual(commits.map(c => c.cursor), replaced ? [] : [{ history: 'durable' }]);
+    if (!replaced) assert.equal(commits[0].phase, 'retrying');
+  }
+});
