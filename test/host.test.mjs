@@ -95,6 +95,18 @@ test('provider status survives without copying response error text', async t => 
     return true;
   });
 });
+test('a null HTTP error body rejects without an uncaught exception', async t => {
+  const url = await server(t, (_req, res) => {
+    res.writeHead(502);
+    res.end('null');
+  });
+  await assert.rejects(createHost({ url, token: 'fixture' }).accounts(), error => {
+    assert.equal(error.status, 502);
+    assert.equal(error.providerStatus, undefined);
+    assert.equal(error.message, 'Mail host refused request.');
+    return true;
+  });
+});
 test('invalid JSON, response bounds and timeouts reject without retry', async t => {
   for (const mode of ['json', 'size', 'timeout']) {
     let count = 0;

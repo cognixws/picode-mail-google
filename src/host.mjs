@@ -53,7 +53,7 @@ export function createHost({
           if (response.statusCode < 200 || response.statusCode >= 300) {
             const error = new Error('Mail host refused request.');
             error.status = response.statusCode;
-            error.providerStatus = value.providerStatus;
+            error.providerStatus = value?.providerStatus;
             reject(error);
           } else resolve(value);
         });
