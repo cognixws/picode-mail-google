@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+- Display the Gmail icon in the extension list, review and details.
+
 ## 0.2.0
 
 - Extract the adapter into an independently installed PiCode extension.

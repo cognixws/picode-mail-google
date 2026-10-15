@@ -1,7 +1,7 @@
 {
   "id": "picode-mail-google",
   "name": "Google Mail",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "apiVersion": 5,
   "publisher": "COGNIX[WS]",
   "description": "Connect and synchronize your Google Mail accounts with the core Inbox.",
@@ -20,5 +20,6 @@
   "permissions": [
     "mail:sync",
     "mail:execute"
-  ]
+  ],
+  "icon": "assets/gmail.png"
 }
